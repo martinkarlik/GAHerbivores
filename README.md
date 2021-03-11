@@ -1,2 +1,2 @@
-# GAHerbivores
-Genetic algorithm to train evolve herbivores and carnivores.
+# ga-herbivores-carnivores
+Genetic algorithm to evolve herbivores and carnivores.
