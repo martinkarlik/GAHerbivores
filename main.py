@@ -19,16 +19,22 @@ if __name__ == '__main__':
     plants = [Plant.initiate_at_random(DISPLAY_SIZE) for _ in range(NUM_PLANTS)]
     herbivores = [Herbivore.initiate_at_random(DISPLAY_SIZE, plants) for _ in range(NUM_HERBIVORES)]
 
-    player = Player.initiate_at_random(DISPLAY_SIZE)
+    player = Player([DISPLAY_SIZE[0] / 2, DISPLAY_SIZE[1] / 2], plants)
 
     game_over = False
     while not game_over:
 
         # UPDATE EVERYTHING ACCORDING TO LOGIC
+
         for herbivore in herbivores:
             herbivore.move()
+            herbivore.eat()
+
+        for _ in range(NUM_PLANTS - len(plants)):
+            plants.append(Plant.initiate_at_random(DISPLAY_SIZE))
 
         player.move()
+        player.eat()
 
         # DRAW EVERYTHING
         screen.fill(BACKGROUND_COLOR)
