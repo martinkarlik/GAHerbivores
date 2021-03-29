@@ -4,38 +4,42 @@ from environment_objects import *
 
 
 DISPLAY_SIZE = (1200, 800)
-GRASS_COLOR = (60, 178, 0)
+BACKGROUND_COLOR = (184, 222, 111)
 
-NUM_CARNIVORES = 20
+
+NUM_HERBIVORES = 1
+NUM_PLANTS = 1
 
 if __name__ == '__main__':
 
     pygame.init()
-    pygame.display.set_caption("Herbivores vs. Carnivores")
+    pygame.display.set_caption("Hunger Games: Herbivores")
     screen = pygame.display.set_mode(DISPLAY_SIZE)
 
-    carnivores = [Carnivore.initiate_at_random(DISPLAY_SIZE) for _ in range(NUM_CARNIVORES)]
+    plants = [Plant.initiate_at_random(DISPLAY_SIZE) for _ in range(NUM_PLANTS)]
+    herbivores = [Herbivore.initiate_at_random(DISPLAY_SIZE, plants) for _ in range(NUM_HERBIVORES)]
 
-    broccoli = Broccoli.initiate_at_random(DISPLAY_SIZE)
-    herbivore = Herbivore([DISPLAY_SIZE[0] / 2, DISPLAY_SIZE[1] / 2])
+    player = Player.initiate_at_random(DISPLAY_SIZE)
 
     game_over = False
     while not game_over:
 
         # UPDATE EVERYTHING ACCORDING TO LOGIC
-        for carnivore in carnivores:
-            carnivore.wander_around_uselessly()
+        for herbivore in herbivores:
+            herbivore.move()
 
-        herbivore.move()
+        player.move()
 
         # DRAW EVERYTHING
-        screen.fill(GRASS_COLOR)
+        screen.fill(BACKGROUND_COLOR)
 
-        for carnivore in carnivores:
-            carnivore.show(screen)
+        for herbivore in herbivores:
+            herbivore.show(screen)
 
-        broccoli.show(screen)
-        herbivore.show(screen)
+        for plant in plants:
+            plant.show(screen)
+
+        player.show(screen)
 
         # LISTEN FOR KEYBOARD INPUT
         for event in pygame.event.get():
@@ -45,17 +49,16 @@ if __name__ == '__main__':
                 if event.key == pygame.K_ESCAPE:
                     game_over = True
                 elif event.key == pygame.K_UP:
-                    herbivore.moving_direction = [0, -1]
+                    player.moving_direction = [0, -1]
                 elif event.key == pygame.K_DOWN:
-                    herbivore.moving_direction = [0, 1]
+                    player.moving_direction = [0, 1]
                 elif event.key == pygame.K_RIGHT:
-                    herbivore.moving_direction = [1, 0]
+                    player.moving_direction = [1, 0]
                 elif event.key == pygame.K_LEFT:
-                    herbivore.moving_direction = [-1, 0]
+                    player.moving_direction = [-1, 0]
             elif event.type == pygame.KEYUP:
-                herbivore.moving_direction = [0, 0]
+                player.moving_direction = [0, 0]
 
         pygame.display.update()
 
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
