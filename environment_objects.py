@@ -41,7 +41,7 @@ class Herbivore:
         self.location[0] += self.moving_direction[0] / 3.0
         self.location[1] += self.moving_direction[1] / 3.0
 
-    def update_plant_positions(self, sensed_plants):
+    def update_sensed_plants(self, sensed_plants):
         self.sensed_plants = sensed_plants
 
 
