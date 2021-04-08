@@ -1,2 +1,2 @@
-# ga-herbivores-carnivores
-Genetic algorithm to evolve herbivores and carnivores.
+# ga-herbivores
+Genetic algorithm to evolve herbivores.
