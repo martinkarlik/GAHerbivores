@@ -1,24 +1,25 @@
 import random
 import pygame
 
+plant_variants = ['grass', 'leaf', 'carrot', 'branch']
 
-class Plant:
+class Plants:
 
-    def __init__(self, location, color=(243, 146, 51), image='images/grass.png'):
+    def __init__(self, location, image, color=(243, 146, 51)):
         self.location = location
         self.color = color
         self.nutrition = 6
-        self.image = pygame.load
+        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), 0, 0.5)
 
     @staticmethod
     def initiate_at_random(display_size):
-        return Plant([
+        return Plants([
             random.randint(0, display_size[0]),
             random.randint(0, display_size[1])
-        ])
+        ], plant_variants[random.randint(0, len(plant_variants) -1)])
 
     def show(self, target):
-        pygame.draw.circle(target, self.color, self.location, 10)
+        target.blit(self.image, self.location)
 
 
 class Herbivore:
@@ -28,6 +29,7 @@ class Herbivore:
         self.moving_direction = [0, 0]
         self.lifetime = 20
         self.sensed_plants = sensed_plants
+        self.image = pygame.transform.rotozoom(pygame.image.load(image), 0, 1)
 
 
     @staticmethod
