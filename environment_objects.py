@@ -49,11 +49,19 @@ class Herbivore:
         self.sensed_plants = sensed_plants
 
     def eat(self):
-        for plant in self.sensed_plants:
-            if abs(plant.location[0] - self.location[0]) < 10 and abs(plant.location[1] - self.location[1]) < 10:
-                print("Plant eaten.")
-                self.sensed_plants.pop(0)
+
+        # Loop through all the plants, and consume the one close to herbivore (if any).
+        # Add its nutrition to my lifetime and delete that plant (which modifies global plant array)
+
+        plant_consumed = False
+        i = 0
+        while not plant_consumed and i < len(self.sensed_plants):
+            plant = self.sensed_plants[i]
+            if abs(plant.location[0] - self.location[0]) < 30 and abs(plant.location[1] - self.location[1]) < 30:
+                self.sensed_plants.pop(i)
                 self.lifetime += plant.nutrition
+                plant_consumed = True
+            i += 1
 
 
 class Player(Herbivore):  # Herbivore but with keyboard controls (easier testing and debugging)
@@ -62,10 +70,10 @@ class Player(Herbivore):  # Herbivore but with keyboard controls (easier testing
         super().__init__(location, sensed_plants)
         self.color = (255, 255, 255)
 
-
-    def eat(self):
-        for plant in self.sensed_plants:
-            if abs(plant.location[0] - self.location[0]) < 10 and abs(plant.location[1] - self.location[1]) < 10:
-                print("Plant eaten.")
-                self.sensed_plants.pop(0)
-                self.lifetime += plant.nutrition
+    #
+    # def eat(self):
+    #     for plant in self.sensed_plants:
+    #         if abs(plant.location[0] - self.location[0]) < 10 and abs(plant.location[1] - self.location[1]) < 10:
+    #             print("Plant eaten.")
+    #             self.sensed_plants.pop(plant)
+    #             self.lifetime += plant.nutrition

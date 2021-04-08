@@ -7,8 +7,8 @@ DISPLAY_SIZE = (1200, 800)
 BACKGROUND_COLOR = (184, 222, 111)
 
 
-NUM_HERBIVORES = 1
-NUM_PLANTS = 1
+NUM_HERBIVORES = 5
+NUM_PLANTS = 10
 
 if __name__ == '__main__':
 
@@ -26,15 +26,17 @@ if __name__ == '__main__':
 
         # UPDATE EVERYTHING ACCORDING TO LOGIC
 
+        for _ in range(NUM_PLANTS - len(plants)):
+            plants.append(Plant.initiate_at_random(DISPLAY_SIZE))
+
         for herbivore in herbivores:
             herbivore.move()
             herbivore.eat()
 
-        for _ in range(NUM_PLANTS - len(plants)):
-            plants.append(Plant.initiate_at_random(DISPLAY_SIZE))
-
         player.move()
         player.eat()
+
+
 
         # DRAW EVERYTHING
         screen.fill(BACKGROUND_COLOR)
