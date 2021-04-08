@@ -9,7 +9,7 @@ class Plants:
         self.location = location
         self.color = color
         self.nutrition = 6
-        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), 0, 0.5)
+        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360), 0.5)
 
     @staticmethod
     def initiate_at_random(display_size):
