@@ -4,10 +4,11 @@ import pygame
 
 class Plant:
 
-    def __init__(self, location, color=(243, 146, 51)):
+    def __init__(self, location, color=(243, 146, 51), image='images/grass.png'):
         self.location = location
         self.color = color
         self.nutrition = 6
+        self.image = pygame.load
 
     @staticmethod
     def initiate_at_random(display_size):
@@ -21,13 +22,13 @@ class Plant:
 
 
 class Herbivore:
-
-    def __init__(self, location, sensed_plants):
+    def __init__(self, location, sensed_plants, image='images/stegosaurus.png'):
         self.location = location
         self.color = (1, 197, 196)
         self.moving_direction = [0, 0]
         self.lifetime = 20
         self.sensed_plants = sensed_plants
+
 
     @staticmethod
     def initiate_at_random(display_size, sensed_plants):
@@ -37,7 +38,8 @@ class Herbivore:
         ], sensed_plants)
 
     def show(self, target):
-        pygame.draw.circle(target, self.color, self.location, 10)
+        # pygame.draw.circle(target, self.color, self.location, 10)
+        target.blit(self.image, self.location)
 
     def move(self):
         self.location[0] += self.moving_direction[0] / 3.0
