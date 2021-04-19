@@ -1,14 +1,16 @@
 import pygame
 import random
 from environment_objects import *
+from genetic_algorithm import *
+from neural_network import *
 
 
 DISPLAY_SIZE = (1200, 800)
 BACKGROUND_COLOR = (184, 222, 111)
 
 
-NUM_HERBIVORES = 5
-NUM_PLANTS = 10
+NUM_HERBIVORES = 10
+NUM_PLANTS = 5
 
 if __name__ == '__main__':
 
@@ -17,9 +19,12 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(DISPLAY_SIZE)
 
     plants = [Plant.initiate_at_random(DISPLAY_SIZE) for _ in range(NUM_PLANTS)]
-    herbivores = [Herbivore.initiate_at_random(DISPLAY_SIZE, plants) for _ in range(NUM_HERBIVORES)]
+
+    herbivores = [Herbivore.initiate_at_random(DISPLAY_SIZE, plants) for _ in range(NUM_PLANTS)]
+    herbivore_population = Population(herbivores)
 
     player = Player([DISPLAY_SIZE[0] / 2, DISPLAY_SIZE[1] / 2], plants)
+    # Controllable herbivore object with keyobard controls just to test the game logic
 
     game_over = False
     while not game_over:
@@ -30,8 +35,15 @@ if __name__ == '__main__':
             plants.append(Plant.initiate_at_random(DISPLAY_SIZE))
 
         for herbivore in herbivores:
+            herbivore.update_sensed_plants(plants)
+
+            herbivore.lock_target()
             herbivore.move()
+
             herbivore.eat()
+
+            if herbivore.lifetime <= 0:
+                herbivores.remove(herbivore)
 
         player.move()
         player.eat()
@@ -68,5 +80,7 @@ if __name__ == '__main__':
                 player.moving_direction = [0, 0]
 
         pygame.display.update()
+
+
 
 
