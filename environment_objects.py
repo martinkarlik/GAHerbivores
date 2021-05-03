@@ -1,5 +1,6 @@
 import random
 import pygame
+import math
 
 import neural_network as nn
 
@@ -24,6 +25,9 @@ class Plant:
     def show(self, target):
         target.blit(self.image, self.location)
 
+    def get_location(self):
+        return self.location
+
 
 class Herbivore:
 
@@ -32,12 +36,15 @@ class Herbivore:
         self.color = (1, 197, 196)
 
         self.moving_direction = [0, 0]
-        self.lifetime = 20
         self.sensed_plants = sensed_plants
+        self.turning_speed = 0.1
+        self.is_turning = False
+        self.turn_target = 0
         self.image = pygame.transform.rotozoom(pygame.image.load(image), 0, 1)
 
         self.lifetime = 5000
         self.chromozome = nn.initiate_random_weights()
+
 
     @staticmethod
     def initiate_at_random(display_size, sensed_plants):
@@ -57,6 +64,21 @@ class Herbivore:
 
     def update_sensed_plants(self, sensed_plants):
         self.sensed_plants = sensed_plants
+
+    def update_moving_direction(self, target_location):
+        target_direction = self.location - target_location
+        target_vector_length = math.sqrt(math.pow(target_direction[0], 2) + math.pow(target_direction[1], 2))
+        normalized_target_direction = [target_direction[0] / target_vector_length,
+                                       target_direction[1] / target_vector_length]
+        if self.moving_direction != normalized_target_direction:
+            if self.is_turning:
+                self.moving_direction += self.turn_target
+                if self.moving_direction == normalized_target_direction:
+                    self.is_turning = False
+            else:
+                self.turn_target = normalized_target_direction - self.moving_direction
+                self.turn_target = self.turn_target * self.turning_speed
+                self.is_turning = True
 
     def eat(self):
         """
@@ -86,8 +108,14 @@ class Herbivore:
                 desired_plant_index = i
                 max_confidence = confidence
 
+        # desired_plant = self.sensed_plants[0]
+
         desired_plant = self.sensed_plants[0]
-        self.moving_direction = self._get_moving_direction(desired_plant.location)
+        self.update_moving_direction(desired_plant.location)
+
+    def move(self):
+        self.location[0] += self.moving_direction[0] / 3.0
+        self.location[1] += self.moving_direction[1] / 3.0
 
     def _construct_features(self, plant):
         """
@@ -95,13 +123,6 @@ class Herbivore:
         features = [my distance to the plant, plant's nutrition]
         """
         return []
-
-
-    def _get_moving_direction(self, target):
-        # Geza's clever math and physics stuff
-        magnitude = max(abs(target[0] - self.location[0]), abs(target[1] - self.location[1]))
-
-        return [(target[0] - self.location[0]) / magnitude, (target[1] - self.location[1]) / magnitude]
 
 
 class Player(Herbivore):  # Herbivore but with keyboard controls (easier testing and debugging)
