@@ -19,7 +19,6 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(DISPLAY_SIZE)
 
     plants = [Plant.initiate_at_random(DISPLAY_SIZE) for _ in range(NUM_PLANTS)]
-
     herbivores = [Herbivore.initiate_at_random(DISPLAY_SIZE, plants) for _ in range(NUM_PLANTS)]
     herbivore_population = Population(herbivores)
 
@@ -32,7 +31,7 @@ if __name__ == '__main__':
         # UPDATE EVERYTHING ACCORDING TO LOGIC
 
         for _ in range(NUM_PLANTS - len(plants)):
-            plants.append(Plant.initiate_at_random(DISPLAY_SIZE))
+            plants.append(Plants.initiate_at_random(DISPLAY_SIZE))
 
         for herbivore in herbivores:
             herbivore.update_sensed_plants(plants)

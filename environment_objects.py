@@ -3,34 +3,38 @@ import pygame
 
 from neural_network import *
 
+plant_variants = ['grass', 'leaf', 'carrot', 'branch']
 
-class Plant:
+class Plants:
 
-    def __init__(self, location, color=(243, 146, 51)):
+    def __init__(self, location, image, color=(243, 146, 51)):
         self.location = location
         self.color = color
         self.nutrition = 2000
+        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360), 0.5)
+
 
     @staticmethod
     def initiate_at_random(display_size):
-        return Plant([
+        return Plants([
             random.randint(0, display_size[0]),
             random.randint(0, display_size[1])
-        ])
+        ], plant_variants[random.randint(0, len(plant_variants) -1)])
 
     def show(self, target):
-        pygame.draw.circle(target, self.color, self.location, 10)
+        target.blit(self.image, self.location)
 
 
 class Herbivore:
-
-    def __init__(self, location, sensed_plants):
+    def __init__(self, location, sensed_plants, image='images/stegosaurus.png'):
         self.location = location
         self.color = (1, 197, 196)
 
         self.moving_direction = [0, 0]
         self.lifetime = 20
         self.sensed_plants = sensed_plants
+        self.image = pygame.transform.rotozoom(pygame.image.load(image), 0, 1)
+
 
         self.lifetime = 5000
         self.model = PlantDirectionClassifier()
@@ -43,7 +47,8 @@ class Herbivore:
         ], sensed_plants)
 
     def show(self, target):
-        pygame.draw.circle(target, self.color, self.location, 10)
+        # pygame.draw.circle(target, self.color, self.location, 10)
+        target.blit(self.image, self.location)
 
     def move(self):
         self.location[0] += self.moving_direction[0] / 3.0
