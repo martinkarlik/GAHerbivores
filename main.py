@@ -29,18 +29,22 @@ if __name__ == '__main__':
 
         for ii in range(TIME_PER_GENERATION):
 
-            # UPDATE EVERYTHING ACCORDING TO LOGIC
-            for iii in range(NUM_PLANTS - len(plants)):
+            # Replant plants if some have been eaten.
+            plants_updated = False
+            for _ in range(NUM_PLANTS - len(plants)):
+                plants_updated = True
                 plants.append(Plant.initiate_at_random(DISPLAY_SIZE))
 
             for herbivore in herbivores:
-                herbivore.update_sensed_plants(plants)
-                herbivore.lock_target()
-                herbivore.move()
-                herbivore.eat()
+                if plants_updated:
+                    herbivore.lock_target()
 
                 if herbivore.lifetime <= 0:
-                    herbivores.remove(herbivore)
+                    herbivore.dead = True
+
+                herbivore.update_sensed_plants(plants)
+                herbivore.move()
+                herbivore.eat()
 
             # DRAW EVERYTHING
             screen.fill(BACKGROUND_COLOR)

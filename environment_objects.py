@@ -59,9 +59,10 @@ class Herbivore:
         self.sensed_plants = sensed_plants
 
     def eat(self):
-
-        # Loop through all the plants, and consume the one close to herbivore (if any).
-        # Add its nutrition to my lifetime and delete that plant (which modifies global plant array)
+        """
+        Loop through all the plants, and consume the one close to herbivore (if any).
+        Add its nutrition to my lifetime and delete that plant (which modifies global plant array).
+        """
 
         i = 0
         plant_consumed = False
@@ -74,18 +75,27 @@ class Herbivore:
             i += 1
 
     def lock_target(self):
-        features = self._construct_features()
-        output = nn.forward_propagate(features)
 
-        desired_plant = self.sensed_plants[output]
+        desired_plant_index = 0
+        max_confidence = 0
 
-        # desired_plant = self.sensed_plants[0]
+        for i in range(0, len(self.sensed_plants)):
+            features = self._construct_features(self.sensed_plants[i])
+            confidence = nn.forward_propagate(self.chromozome, features)
+            if confidence > max_confidence:
+                desired_plant_index = i
+                max_confidence = confidence
 
+        desired_plant = self.sensed_plants[0]
         self.moving_direction = self._get_moving_direction(desired_plant.location)
 
-    def _construct_features(self):
-        # Use self.sensed_plants to construct a list of features
+    def _construct_features(self, plant):
+        """
+        Get the features we care about, so that would be
+        features = [my distance to the plant, plant's nutrition]
+        """
         return []
+
 
     def _get_moving_direction(self, target):
         # Geza's clever math and physics stuff
