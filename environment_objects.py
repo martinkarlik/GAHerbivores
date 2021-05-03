@@ -111,11 +111,8 @@ class Herbivore:
         # desired_plant = self.sensed_plants[0]
 
         desired_plant = self.sensed_plants[0]
-        self.update_moving_direction(desired_plant.location)
-
-    def move(self):
-        self.location[0] += self.moving_direction[0] / 3.0
-        self.location[1] += self.moving_direction[1] / 3.0
+        self.moving_direction = self._get_moving_direction(desired_plant.location)
+        # self.update_moving_direction(desired_plant.location)
 
     def _construct_features(self, plant):
         """
@@ -123,6 +120,12 @@ class Herbivore:
         features = [my distance to the plant, plant's nutrition]
         """
         return []
+
+    def _get_moving_direction(self, target):
+        # Geza's clever math and physics stuff
+        magnitude = max(abs(target[0] - self.location[0]), abs(target[1] - self.location[1]))
+        return [(target[0] - self.location[0]) / magnitude, (target[1] - self.location[1]) / magnitude]
+
 
 
 class Player(Herbivore):  # Herbivore but with keyboard controls (easier testing and debugging)

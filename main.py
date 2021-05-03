@@ -36,7 +36,7 @@ if __name__ == '__main__':
                 plants.append(Plant.initiate_at_random(DISPLAY_SIZE))
 
             for herbivore in herbivores:
-                if plants_updated:
+                if plants_updated or i == 0:
                     herbivore.lock_target()
 
                 if herbivore.lifetime <= 0:
