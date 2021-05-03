@@ -1,22 +1,22 @@
 import random
 import pygame
 
-from neural_network import *
+import neural_network as nn
 
 plant_variants = ['grass', 'leaf', 'carrot', 'branch']
 
-class Plants:
+
+class Plant:
 
     def __init__(self, location, image, color=(243, 146, 51)):
         self.location = location
         self.color = color
-        self.nutrition = 2000
+        self.nutrition = 1000
         self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360), 0.5)
-
 
     @staticmethod
     def initiate_at_random(display_size):
-        return Plants([
+        return Plant([
             random.randint(0, display_size[0]),
             random.randint(0, display_size[1])
         ], plant_variants[random.randint(0, len(plant_variants) -1)])
@@ -26,6 +26,7 @@ class Plants:
 
 
 class Herbivore:
+
     def __init__(self, location, sensed_plants, image='images/stegosaurus.png'):
         self.location = location
         self.color = (1, 197, 196)
@@ -35,9 +36,8 @@ class Herbivore:
         self.sensed_plants = sensed_plants
         self.image = pygame.transform.rotozoom(pygame.image.load(image), 0, 1)
 
-
         self.lifetime = 5000
-        self.model = PlantDirectionClassifier()
+        self.chromozome = nn.initiate_random_weights()
 
     @staticmethod
     def initiate_at_random(display_size, sensed_plants):
@@ -47,7 +47,6 @@ class Herbivore:
         ], sensed_plants)
 
     def show(self, target):
-        # pygame.draw.circle(target, self.color, self.location, 10)
         target.blit(self.image, self.location)
 
     def move(self):
@@ -74,6 +73,16 @@ class Herbivore:
                 plant_consumed = True
             i += 1
 
+    def lock_target(self):
+        features = self._construct_features()
+        output = nn.forward_propagate(features)
+
+        desired_plant = self.sensed_plants[output]
+
+        # desired_plant = self.sensed_plants[0]
+
+        self.moving_direction = self._get_moving_direction(desired_plant.location)
+
     def _construct_features(self):
         # Use self.sensed_plants to construct a list of features
         return []
@@ -83,16 +92,6 @@ class Herbivore:
         magnitude = max(abs(target[0] - self.location[0]), abs(target[1] - self.location[1]))
 
         return [(target[0] - self.location[0]) / magnitude, (target[1] - self.location[1]) / magnitude]
-
-    def lock_target(self):
-
-        # features = self._construct_features()
-        # output = self.model.forward_propagate(features)
-
-        # desired_plant = self.sensed_plants[output]
-        desired_plant = self.sensed_plants[0]
-
-        self.moving_direction = self._get_moving_direction(desired_plant.location)
 
 
 class Player(Herbivore):  # Herbivore but with keyboard controls (easier testing and debugging)
