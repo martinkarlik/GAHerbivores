@@ -1,5 +1,6 @@
 import random
 import pygame
+import math
 
 
 class Plant:
@@ -18,6 +19,9 @@ class Plant:
     def show(self, target):
         pygame.draw.circle(target, self.color, self.location, 10)
 
+    def get_location(self):
+        return self.location
+
 
 class Herbivore:
 
@@ -26,6 +30,9 @@ class Herbivore:
         self.color = (1, 197, 196)
         self.moving_direction = [0, 0]
         self.sensed_plants = sensed_plants
+        self.turning_speed = 0.1
+        self.is_turning = False
+        self.turn_target = 0
 
     @staticmethod
     def initiate_at_random(display_size, sensed_plants):
@@ -43,6 +50,23 @@ class Herbivore:
 
     def update_plant_positions(self, sensed_plants):
         self.sensed_plants = sensed_plants
+
+    def update_moving_direction(self, plant_id):
+        target_direction = self.location - self.sensed_plants[plant_id].get_location()
+        target_vector_length = math.sqrt(math.pow(target_direction[0]) + math.pow(target_direction[1]))
+        normalized_target_direction = [target_direction[0] / target_vector_length,
+                                       target_direction[1] / target_vector_length]
+        if self.moving_direction != normalized_target_direction:
+            if self.is_turning:
+                self.moving_direction += self.turn_target
+                if self.moving_direction == normalized_target_direction:
+                    self.is_turning = False
+            else:
+                self.turn_target = normalized_target_direction - self.moving_direction
+                self.turn_target = self.turn_target*self.turning_speed
+                self.is_turning = True
+
+
 
 
 class Player:
