@@ -22,8 +22,9 @@ if __name__ == '__main__':
     pygame.display.set_caption("Hunger Games: Herbivores")
     screen = pygame.display.set_mode(DISPLAY_SIZE)
 
-    plants = [Plant.initiate_at_random(DISPLAY_SIZE) for _ in range(NUM_PLANTS)]
-    herbivores = [Herbivore.initiate_at_random(DISPLAY_SIZE, plants) for _ in range(NUM_PLANTS)]
+    plants = [Plant.initiate_at_random() for _ in range(NUM_PLANTS)]
+
+    herbivores = [Herbivore.initiate_at_random() for _ in range(NUM_HERBIVORES)]
 
     for i in range(NUM_GENERATIONS):
 
@@ -33,18 +34,19 @@ if __name__ == '__main__':
             plants_updated = False
             for _ in range(NUM_PLANTS - len(plants)):
                 plants_updated = True
-                plants.append(Plant.initiate_at_random(DISPLAY_SIZE))
+                plants.append(Plant.initiate_at_random())
 
             for herbivore in herbivores:
+
+                herbivore.update_sensed_plants(plants)
+                herbivore.move()
+                herbivore.eat()
+
                 if plants_updated or i == 0:
                     herbivore.lock_target()
 
                 if herbivore.lifetime <= 0:
                     herbivore.dead = True
-
-                herbivore.update_sensed_plants(plants)
-                herbivore.move()
-                herbivore.eat()
 
             # DRAW EVERYTHING
             screen.fill(BACKGROUND_COLOR)

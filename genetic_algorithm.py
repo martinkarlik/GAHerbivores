@@ -3,30 +3,22 @@ from environment_objects import *
 
 
 def fitness_proportionate_selection(population):
-    specimen = None
+
+    total_fitness = sum(herbivore.lifetime for herbivore in population)
+    threshold = random.uniform(0, total_fitness)
+    current = 0
     for herbivore in population:
-        if specimen is None:
-            specimen = herbivore
-            herbivore.isMating = True
-        elif herbivore.lifetime > specimen.lifetime:
-            if not herbivore.isMating:
-                specimen = herbivore
-
-    return specimen
-
-
-    """
-    Select a herbivore out a population in proportion to its fitness (i.e. lifetime).
-    """
+        current += herbivore.fitness
+        if current > threshold:
+            return herbivore
+    return population[0]
 
 
 def reproduce(first_parent, second_parent):
-    """
-    Generate an offspring from the two parents.
-    I don't know how, I guess just average their weights ([1.4, 0.8] and [1.6, 1.0] would become [1.5, 0.9]),
-    but you can be more clever about it.
-    """
-    return first_parent
+    offspring_chromozome = [(first_parent.chromozome[0] + second_parent.chromozome[0]) / 2,
+                            (first_parent.chromozome[1] + second_parent.chromozome[1]) / 2]
+
+    return Herbivore.initiate_at_random(weights=offspring_chromozome)
 
 
 def mutate(offspring):
@@ -37,7 +29,9 @@ def mutate(offspring):
     The weights is a list of 2 numbers, e.g. [1.4, 0.8], representing the importance of the plant's information (distance, nutrition)
     So basically, we would like [1.4, 0.8] to become let's say [1.5, 0.8] or sth like that. Just slightly randomize it.
     """
-    return offspring
+    mutated_chromosome = [offspring.chromosome[0] * (0.8 + random.random() * 0.4), offspring.chromosome[1] * (0.8 + random.random() * 0.4)]
+
+    return Herbivore.initiate_at_random(weights=mutated_chromosome)
 
 
 

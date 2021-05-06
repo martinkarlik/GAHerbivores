@@ -4,6 +4,7 @@ import math
 
 import neural_network as nn
 
+DISPLAY_SIZE = (1200, 800)
 plant_variants = ['grass', 'leaf', 'carrot', 'branch']
 
 
@@ -13,14 +14,15 @@ class Plant:
         self.location = location
         self.color = color
         self.nutrition = 1000
-        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360), 0.5)
+        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360),
+                                               0.5)
 
     @staticmethod
-    def initiate_at_random(display_size):
+    def initiate_at_random():
         return Plant([
-            random.randint(0, display_size[0]),
-            random.randint(0, display_size[1])
-        ], plant_variants[random.randint(0, len(plant_variants) -1)])
+            random.randint(0, DISPLAY_SIZE[0]),
+            random.randint(0, DISPLAY_SIZE[1])
+        ], plant_variants[random.randint(0, len(plant_variants) - 1)])
 
     def show(self, target):
         target.blit(self.image, self.location)
@@ -31,29 +33,29 @@ class Plant:
 
 class Herbivore:
 
-    def __init__(self, location, sensed_plants, image='images/stegosaurus.png'):
+    def __init__(self, location, weights, image):
+
         self.location = location
         self.color = (1, 197, 196)
 
         self.isMating = False
 
         self.moving_direction = [0, 0]
-        self.sensed_plants = sensed_plants
+        self.sensed_plants = None
         self.turning_speed = 0.1
         self.is_turning = False
         self.turn_target = 0
         self.image = pygame.transform.rotozoom(pygame.image.load(image), 0, 1)
 
         self.lifetime = 5000
-        self.chromozome = nn.initiate_random_weights()
-
+        self.chromosome = weights if weights is not None else nn.initiate_random_weights()
 
     @staticmethod
-    def initiate_at_random(display_size, sensed_plants):
+    def initiate_at_random(weights=None, image='images/stegosaurus.png'):
         return Herbivore([
-            random.randint(0, display_size[0]),
-            random.randint(0, display_size[1])
-        ], sensed_plants)
+            random.randint(0, DISPLAY_SIZE[0]),
+            random.randint(0, DISPLAY_SIZE[1])
+        ], weights, image)
 
     def show(self, target):
         target.blit(self.image, self.location)
@@ -105,12 +107,12 @@ class Herbivore:
 
         for i in range(0, len(self.sensed_plants)):
             features = self._construct_features(self.sensed_plants[i])
-            confidence = nn.forward_propagate(self.chromozome, features)
+            confidence = nn.forward_propagate(self.chromosome, features)
             if confidence > max_confidence:
                 desired_plant_index = i
                 max_confidence = confidence
 
-        # desired_plant = self.sensed_plants[0]
+        # desired_plant = self.sensed_plants[desired_plant_index]
 
         desired_plant = self.sensed_plants[0]
         self.moving_direction = self._get_moving_direction(desired_plant.location)
@@ -127,7 +129,6 @@ class Herbivore:
         # Geza's clever math and physics stuff
         magnitude = max(abs(target[0] - self.location[0]), abs(target[1] - self.location[1]))
         return [(target[0] - self.location[0]) / magnitude, (target[1] - self.location[1]) / magnitude]
-
 
 
 class Player(Herbivore):  # Herbivore but with keyboard controls (easier testing and debugging)
