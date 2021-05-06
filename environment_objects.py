@@ -1,10 +1,15 @@
 import random
+
+import numpy as np
 import pygame
 import math
 
 import neural_network as nn
 
 DISPLAY_SIZE = (1200, 800)
+MAX_DISTANCE = np.sqrt(2)*DISPLAY_SIZE[1]
+MAX_PLANT_NUTRITION = 1000
+MAX_CAFFEINE = 1
 plant_variants = ['grass', 'leaf', 'carrot', 'branch']
 
 
@@ -125,7 +130,8 @@ class Herbivore:
         plant_distance = math.sqrt(math.pow(target_direction[0], 2) + math.pow(target_direction[1], 2))
 
         features = [plant_distance, plant.nutrition, plant.caffeine]
-        normalized_features = nn.get_normalized_features(features)
+        features_maximum = [MAX_DISTANCE, MAX_PLANT_NUTRITION, MAX_CAFFEINE]
+        normalized_features = nn.get_normalized_features(features, features_maximum)
 
         return normalized_features
 
