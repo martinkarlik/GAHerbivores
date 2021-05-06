@@ -15,8 +15,7 @@ class Plant:
         self.color = color
         self.nutrition = 1000
         self.caffeine = 0.8
-        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360),
-                                               0.5)
+        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360), 0.5)
 
     @staticmethod
     def initiate_at_random():
@@ -112,10 +111,11 @@ class Herbivore:
                 desired_plant_index = i
                 max_confidence = confidence
 
-        # desired_plant = self.sensed_plants[desired_plant_index]
+        desired_plant = self.sensed_plants[desired_plant_index]
 
-        print(len(self.sensed_plants))
-        desired_plant = self.sensed_plants[random.randint(0, 4)]
+        # print(len(self.sensed_plants))
+        # desired_plant = self.sensed_plants[random.randint(0, len(self.sensed_plants) - 1)]
+
         self.moving_direction = self._get_moving_direction(desired_plant.location)
         # self.update_moving_direction(desired_plant.location)
 

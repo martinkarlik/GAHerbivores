@@ -18,4 +18,4 @@ def forward_propagate(weights, features):
     """
     Multiply the features (plant's information) with the weights and then sigmoid them.
     """
-    return 1.0
+    return random.random()
