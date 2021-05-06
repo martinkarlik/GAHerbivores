@@ -50,6 +50,7 @@ class Herbivore:
         self.lifetime = 5000
         self.chromosome = weights if weights is not None else nn.initiate_random_weights()
 
+
     @staticmethod
     def initiate_at_random(weights=None, image='images/stegosaurus.png'):
         return Herbivore([
