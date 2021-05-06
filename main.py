@@ -44,14 +44,27 @@ if __name__ == '__main__':
                 if plants_updated or ii == 0:
                     herbivore.lock_target()
 
-                if herbivore.lifetime <= 0:
-                    herbivore.dead = True
+                if not herbivore.isDead:
+                    if herbivore.hunger <= 0:
+                        herbivore.isDead = True
+                        print("poor herbivore died :(")
+
+                    if not herbivore.isDead:
+                        herbivore.lifetime += 1
+                        herbivore.update_sensed_plants(plants)
+                        herbivore.update_moving_direction()
+                        if not herbivore.is_turning:
+                            herbivore.move()
+                            herbivore.eat()
+
+
 
             # DRAW EVERYTHING
             screen.fill(BACKGROUND_COLOR)
 
             for herbivore in herbivores:
-                herbivore.show(screen)
+                if not herbivore.isDead:
+                    herbivore.show(screen)
 
             for plant in plants:
                 plant.show(screen)
