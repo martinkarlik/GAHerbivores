@@ -11,7 +11,7 @@ DISPLAY_SIZE = (1200, 800)
 PLANT_VARIANTS = [
     {'image': 'grass.png',
      'nutrition': 2000,
-     'caffeine': 1.5},
+     'caffeine': 1.2},
     {'image': 'leaf.png',
      'nutrition': 3000,
      'caffeine': 0.95},
@@ -20,7 +20,7 @@ PLANT_VARIANTS = [
      'caffeine': 0.7},
     {'image': 'branch.png',
      'nutrition': 1500,
-     'caffeine': 1.8}
+     'caffeine': 1.1}
 ]
 
 MAX_DISTANCE = np.sqrt(2)*DISPLAY_SIZE[1]

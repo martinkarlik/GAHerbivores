@@ -13,7 +13,6 @@ def sigmoid(x):
 def forward_propagate(weights, features):
     bias = random.randrange(-1, 1)
     activation = sigmoid(np.dot(weights, features)+bias)
-    print(activation)
     """
     Multiply the features (plant's information) with the weights and then sigmoid them.
     """
