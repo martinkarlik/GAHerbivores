@@ -5,24 +5,38 @@ import math
 import neural_network as nn
 
 DISPLAY_SIZE = (1200, 800)
-plant_variants = ['grass', 'leaf', 'carrot', 'branch']
+
+PLANT_VARIANTS = [
+    {'image': 'grass.png',
+     'nutrition': 2000,
+     'caffeine': 1.1},
+    {'image': 'leaf.png',
+     'nutrition': 3000,
+     'caffeine': 0.95},
+    {'image': 'carrot.png',
+     'nutrition': 5000,
+     'caffeine': 0.7},
+    {'image': 'branch.png',
+     'nutrition': 1500,
+     'caffeine': 1.2}
+]
 
 
 class Plant:
 
-    def __init__(self, location, image, color=(243, 146, 51)):
+    def __init__(self, location, type):
         self.location = location
-        self.color = color
-        self.nutrition = 1000
-        self.caffeine = 0.8
-        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360), 0.5)
+        self.nutrition = PLANT_VARIANTS[type]["nutrition"]
+        self.caffeine = PLANT_VARIANTS[type]["caffeine"]
+        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + PLANT_VARIANTS[type]["image"]), random.randint(0, 360), 0.5)
+
 
     @staticmethod
     def initiate_at_random():
         return Plant([
             random.randint(0, DISPLAY_SIZE[0]),
             random.randint(0, DISPLAY_SIZE[1])
-        ], plant_variants[random.randint(0, len(plant_variants) - 1)])
+        ], random.randint(0, len(PLANT_VARIANTS) - 1))
 
     def show(self, target):
         target.blit(self.image, self.location)
@@ -40,7 +54,7 @@ class Herbivore:
         self.sensed_plants = None
 
         self.moving_direction = [0, 0]
-        self.speed_multiplier = 0.7
+        self.speed_multiplier = 0.5
         self.turning_speed = 0.1
         self.is_turning = False
         self.turn_target = 0
@@ -48,7 +62,6 @@ class Herbivore:
 
         self.lifetime = 5000
         self.chromosome = weights if weights is not None else nn.initiate_random_weights()
-
 
     @staticmethod
     def initiate_at_random(weights=None, image='images/stegosaurus.png'):
@@ -96,6 +109,7 @@ class Herbivore:
             plant = self.sensed_plants[i]
             if abs(plant.location[0] - self.location[0]) < 30 and abs(plant.location[1] - self.location[1]) < 30:
                 self.sensed_plants.pop(i)
+                self.speed_multiplier *= plant.caffeine
                 self.lifetime += plant.nutrition
                 plant_consumed = True
             i += 1
@@ -133,4 +147,3 @@ class Herbivore:
         # Geza's clever math and physics stuff
         magnitude = max(abs(target[0] - self.location[0]), abs(target[1] - self.location[1]))
         return [(target[0] - self.location[0]) / magnitude, (target[1] - self.location[1]) / magnitude]
-

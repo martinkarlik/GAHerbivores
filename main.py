@@ -9,7 +9,7 @@ BACKGROUND_COLOR = (184, 222, 111)
 
 
 NUM_GENERATIONS = 20
-TIME_PER_GENERATION = 2000
+TIME_PER_GENERATION = 20000
 MUTATION_PROBABILITY = 0.05
 
 NUM_HERBIVORES = 10
@@ -26,11 +26,9 @@ if __name__ == '__main__':
     herbivores = [Herbivore.initiate_at_random() for _ in range(NUM_HERBIVORES)]
     most_fit = None
 
-    for i in range(NUM_GENERATIONS):
-        # print("Generation: {}".format(i))
+    for i in range(1, NUM_GENERATIONS):
 
         for ii in range(TIME_PER_GENERATION):
-            # print("Time: {}".format(ii))
 
             # Replant plants if some have been eaten.
             plants_updated = False
