@@ -7,13 +7,16 @@ def initiate_random_weights():
 
 
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    try:
+        return 1 / (1 + np.exp(-x))
+    except OverflowError:
+        print('error')
 
 
 def forward_propagate(weights, features):
     bias = random.randrange(-1, 1)
     activation = sigmoid(np.dot(weights, features)+bias)
-    print(activation)
+    #print(activation)
     """
     Multiply the features (plant's information) with the weights and then sigmoid them.
     """
