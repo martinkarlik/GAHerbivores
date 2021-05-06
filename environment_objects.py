@@ -43,7 +43,7 @@ class Herbivore:
         self.image = pygame.transform.rotozoom(pygame.image.load(image), 0, 1)
 
         self.lifetime = 5000
-        self.chromozome = nn.initiate_random_weights()
+        self.chromosome = nn.initiate_random_weights()
 
 
     @staticmethod
@@ -103,7 +103,7 @@ class Herbivore:
 
         for i in range(0, len(self.sensed_plants)):
             features = self._construct_features(self.sensed_plants[i])
-            confidence = nn.forward_propagate(self.chromozome, features)
+            confidence = nn.forward_propagate(self.chromosome, features)
             if confidence > max_confidence:
                 desired_plant_index = i
                 max_confidence = confidence
