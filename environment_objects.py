@@ -48,7 +48,6 @@ class Herbivore:
         self.isDead = False
 
         self.moving_direction = [0, 1]
-        self.sensed_plants = sensed_plants
         self.target_plant_location = None
         self.turning_speed = 0.01
         self.sensed_plants = None
