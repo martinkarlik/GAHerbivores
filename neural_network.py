@@ -18,8 +18,11 @@ def forward_propagate(weights, features):
     Multiply the features (plant's information) with the weights and then sigmoid them.
     """
     return activation
-    
 
 
-def get_normalized_features(features):
-    return features
+def get_normalized_features(features, features_maximum):
+    normalized_features = []
+    for i in range(len(features)):
+        normalized_features.append(features[i]/features_maximum[i])
+
+    return normalized_features

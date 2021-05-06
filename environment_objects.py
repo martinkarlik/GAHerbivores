@@ -1,4 +1,6 @@
 import random
+
+import numpy as np
 import pygame
 import math
 
@@ -20,6 +22,10 @@ PLANT_VARIANTS = [
      'nutrition': 1500,
      'caffeine': 1.8}
 ]
+
+MAX_DISTANCE = np.sqrt(2)*DISPLAY_SIZE[1]
+MAX_PLANT_NUTRITION = 1000
+MAX_CAFFEINE = 1.2
 
 
 class Plant:
@@ -139,7 +145,8 @@ class Herbivore:
         plant_distance = math.sqrt(math.pow(target_direction[0], 2) + math.pow(target_direction[1], 2))
 
         features = [plant_distance, plant.nutrition, plant.caffeine]
-        normalized_features = nn.get_normalized_features(features)
+        features_maximum = [MAX_DISTANCE, MAX_PLANT_NUTRITION, MAX_CAFFEINE]
+        normalized_features = nn.get_normalized_features(features, features_maximum)
 
         return normalized_features
 
