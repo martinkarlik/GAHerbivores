@@ -35,6 +35,8 @@ class Herbivore:
         self.location = location
         self.color = (1, 197, 196)
 
+        self.isMating = False
+
         self.moving_direction = [0, 0]
         self.sensed_plants = sensed_plants
         self.turning_speed = 0.1

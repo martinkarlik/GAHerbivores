@@ -3,10 +3,21 @@ from environment_objects import *
 
 
 def fitness_proportionate_selection(population):
+    specimen = None
+    for herbivore in population:
+        if specimen is None:
+            specimen = herbivore
+            herbivore.isMating = True
+        elif herbivore.lifetime > specimen.lifetime:
+            if not herbivore.isMating:
+                specimen = herbivore
+
+    return specimen
+
+
     """
     Select a herbivore out a population in proportion to its fitness (i.e. lifetime).
     """
-    return population[0]
 
 
 def reproduce(first_parent, second_parent):
