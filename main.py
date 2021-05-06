@@ -29,7 +29,7 @@ if __name__ == '__main__':
         print("Generation: {}".format(i))
 
         for ii in range(TIME_PER_GENERATION):
-            print("Time: {}".format(ii))
+            #print("Time: {}".format(ii))
 
             # Replant plants if some have been eaten.
             plants_updated = False
