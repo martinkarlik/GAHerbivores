@@ -2,6 +2,16 @@ import random
 from environment_objects import *
 
 
+def get_most_fit(population):
+    most_fit = population[0]
+
+    for herbivore in population:
+        if herbivore.lifetime > most_fit.lifetime:
+            most_fit = herbivore
+
+    return most_fit
+
+
 def fitness_proportionate_selection(population):
 
     total_fitness = sum(herbivore.lifetime for herbivore in population)

@@ -24,9 +24,10 @@ if __name__ == '__main__':
 
     plants = []
     herbivores = [Herbivore.initiate_at_random() for _ in range(NUM_HERBIVORES)]
+    most_fit = None
 
     for i in range(NUM_GENERATIONS):
-        print("Generation: {}".format(i))
+        # print("Generation: {}".format(i))
 
         for ii in range(TIME_PER_GENERATION):
             #print("Time: {}".format(ii))
@@ -57,11 +58,30 @@ if __name__ == '__main__':
             for plant in plants:
                 plant.show(screen)
 
+            font = pygame.font.Font('freesansbold.ttf', 32)
+
+            text = font.render("Generation: {}".format(i), True, (0, 0, 0), BACKGROUND_COLOR)
+            text_rect = text.get_rect()
+            text_rect.bottomleft = (0, 40)
+            screen.blit(text, text_rect)
+
+            text = font.render("Time: {}".format(ii), True, (0, 0, 0), BACKGROUND_COLOR)
+            text_rect = text.get_rect()
+            text_rect.bottomleft = (0, 80)
+            screen.blit(text, text_rect)
+
+            # text = font.render("Best lifetime: {}".format(most_fit.lifetime if most_fit is not None else "I don't know yet."), True, (0, 0, 0), BACKGROUND_COLOR)
+            # text_rect = text.get_rect()
+            # text_rect.bottomleft = (0, 120)
+            # screen.blit(text, text_rect)
+
             pygame.display.update()
 
         # EVOLVE NEW GENERATION
-        offspring_population = []
 
+        most_fit = ga.get_most_fit(herbivores)
+
+        offspring_population = []
         while len(offspring_population) < len(herbivores):
 
             parent_a = ga.fitness_proportionate_selection(herbivores)
@@ -76,6 +96,7 @@ if __name__ == '__main__':
 
         plants = []
         herbivores = offspring_population
+
 
 
 

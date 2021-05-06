@@ -15,8 +15,7 @@ class Plant:
         self.color = color
         self.nutrition = 1000
         self.caffeine = 0.8
-        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360),
-                                               0.5)
+        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360), 0.5)
 
     @staticmethod
     def initiate_at_random():
@@ -38,9 +37,10 @@ class Herbivore:
 
         self.location = location
         self.color = (1, 197, 196)
+        self.sensed_plants = None
 
         self.moving_direction = [0, 0]
-        self.sensed_plants = None
+        self.speed_multiplier = 0.7
         self.turning_speed = 0.1
         self.is_turning = False
         self.turn_target = 0
@@ -61,8 +61,8 @@ class Herbivore:
         target.blit(self.image, self.location)
 
     def move(self):
-        self.location[0] += self.moving_direction[0] / 3.0
-        self.location[1] += self.moving_direction[1] / 3.0
+        self.location[0] += self.moving_direction[0] * self.speed_multiplier
+        self.location[1] += self.moving_direction[1] * self.speed_multiplier
 
         self.lifetime -= 1
 
@@ -112,10 +112,11 @@ class Herbivore:
                 desired_plant_index = i
                 max_confidence = confidence
 
-        # desired_plant = self.sensed_plants[desired_plant_index]
+        desired_plant = self.sensed_plants[desired_plant_index]
 
-        print(len(self.sensed_plants))
-        desired_plant = self.sensed_plants[random.randint(0, 4)]
+        # print(len(self.sensed_plants))
+        # desired_plant = self.sensed_plants[random.randint(0, len(self.sensed_plants) - 1)]
+
         self.moving_direction = self._get_moving_direction(desired_plant.location)
         # self.update_moving_direction(desired_plant.location)
 
@@ -123,7 +124,10 @@ class Herbivore:
         target_direction = [self.location[0] - plant.location[0], self.location[1] - plant.location[1]]
         plant_distance = math.sqrt(math.pow(target_direction[0], 2) + math.pow(target_direction[1], 2))
 
-        return [plant_distance, plant.nutrition, plant.caffeine]
+        features = [plant_distance, plant.nutrition, plant.caffeine]
+        normalized_features = nn.get_normalized_features(features)
+
+        return normalized_features
 
     def _get_moving_direction(self, target):
         # Geza's clever math and physics stuff
