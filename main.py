@@ -9,7 +9,7 @@ BACKGROUND_COLOR = (184, 222, 111)
 
 
 NUM_GENERATIONS = 20
-TIME_PER_GENERATION = 100000
+TIME_PER_GENERATION = 2000
 MUTATION_PROBABILITY = 0.05
 
 NUM_HERBIVORES = 10
@@ -22,21 +22,28 @@ if __name__ == '__main__':
     pygame.display.set_caption("Hunger Games: Herbivores")
     screen = pygame.display.set_mode(DISPLAY_SIZE)
 
-    plants = [Plant.initiate_at_random(DISPLAY_SIZE) for _ in range(NUM_PLANTS)]
-    herbivores = [Herbivore.initiate_at_random(DISPLAY_SIZE, plants) for _ in range(NUM_PLANTS)]
+    plants = []
+    herbivores = [Herbivore.initiate_at_random() for _ in range(NUM_HERBIVORES)]
+    most_fit = None
 
     for i in range(NUM_GENERATIONS):
+        # print("Generation: {}".format(i))
 
         for ii in range(TIME_PER_GENERATION):
+            #print("Time: {}".format(ii))
 
             # Replant plants if some have been eaten.
             plants_updated = False
             for _ in range(NUM_PLANTS - len(plants)):
                 plants_updated = True
-                plants.append(Plant.initiate_at_random(DISPLAY_SIZE))
+                plants.append(Plant.initiate_at_random())
 
             for herbivore in herbivores:
-                if plants_updated or i == 0:
+                herbivore.update_sensed_plants(plants)
+                herbivore.move()
+                herbivore.eat()
+
+                if plants_updated or ii == 0:
                     herbivore.lock_target()
 
                 if not herbivore.isDead:
@@ -54,7 +61,6 @@ if __name__ == '__main__':
 
 
 
-
             # DRAW EVERYTHING
             screen.fill(BACKGROUND_COLOR)
 
@@ -65,23 +71,45 @@ if __name__ == '__main__':
             for plant in plants:
                 plant.show(screen)
 
+            font = pygame.font.Font('freesansbold.ttf', 32)
+
+            text = font.render("Generation: {}".format(i), True, (0, 0, 0), BACKGROUND_COLOR)
+            text_rect = text.get_rect()
+            text_rect.bottomleft = (0, 40)
+            screen.blit(text, text_rect)
+
+            text = font.render("Time: {}".format(ii), True, (0, 0, 0), BACKGROUND_COLOR)
+            text_rect = text.get_rect()
+            text_rect.bottomleft = (0, 80)
+            screen.blit(text, text_rect)
+
+            # text = font.render("Best lifetime: {}".format(most_fit.lifetime if most_fit is not None else "I don't know yet."), True, (0, 0, 0), BACKGROUND_COLOR)
+            # text_rect = text.get_rect()
+            # text_rect.bottomleft = (0, 120)
+            # screen.blit(text, text_rect)
+
             pygame.display.update()
 
         # EVOLVE NEW GENERATION
-        offspring_population = []
 
+        most_fit = ga.get_most_fit(herbivores)
+
+        offspring_population = []
         while len(offspring_population) < len(herbivores):
 
             parent_a = ga.fitness_proportionate_selection(herbivores)
             parent_b = ga.fitness_proportionate_selection(herbivores)
 
             offspring = ga.reproduce(parent_a, parent_b)
+
             if random.random() < MUTATION_PROBABILITY:
                 offspring = ga.mutate(offspring)
 
             offspring_population.append(offspring)
 
-        population = offspring_population
+        plants = []
+        herbivores = offspring_population
+
 
 
 

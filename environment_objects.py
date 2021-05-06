@@ -1,10 +1,16 @@
 import random
+
+import numpy as np
 import pygame
 import math
 import numpy as np
 
 import neural_network as nn
 
+DISPLAY_SIZE = (1200, 800)
+MAX_DISTANCE = np.sqrt(2)*DISPLAY_SIZE[1]
+MAX_PLANT_NUTRITION = 1000
+MAX_CAFFEINE = 1
 plant_variants = ['grass', 'leaf', 'carrot', 'branch']
 
 
@@ -14,14 +20,14 @@ class Plant:
         self.location = location
         self.color = color
         self.nutrition = 1000
-        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360),
-                                               0.5)
+        self.caffeine = 0.8
+        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360), 0.5)
 
     @staticmethod
-    def initiate_at_random(display_size):
+    def initiate_at_random():
         return Plant([
-            random.randint(0, display_size[0]),
-            random.randint(0, display_size[1])
+            random.randint(0, DISPLAY_SIZE[0]),
+            random.randint(0, DISPLAY_SIZE[1])
         ], plant_variants[random.randint(0, len(plant_variants) - 1)])
 
     def show(self, target):
@@ -33,7 +39,8 @@ class Plant:
 
 class Herbivore:
 
-    def __init__(self, location, sensed_plants, image='images/stegosaurus.png'):
+    def __init__(self, location, weights, image):
+
         self.location = location
         self.color = (1, 197, 196)
 
@@ -44,28 +51,30 @@ class Herbivore:
         self.sensed_plants = sensed_plants
         self.target_plant_location = None
         self.turning_speed = 0.01
+        self.sensed_plants = None
+
+        self.speed_multiplier = 0.7
         self.is_turning = False
-        self.turn_target = 0
         self.angle_to_plant = None
         self.image = pygame.transform.rotozoom(pygame.image.load(image), 0, 1)
 
         self.lifetime = 0
         self.hunger = 5000
-        self.chromozome = nn.initiate_random_weights()
+        self.chromosome = weights if weights is not None else nn.initiate_random_weights()
 
     @staticmethod
-    def initiate_at_random(display_size, sensed_plants):
+    def initiate_at_random(weights=None, image='images/stegosaurus.png'):
         return Herbivore([
-            random.randint(0, display_size[0]),
-            random.randint(0, display_size[1])
-        ], sensed_plants)
+            random.randint(0, DISPLAY_SIZE[0]),
+            random.randint(0, DISPLAY_SIZE[1])
+        ], weights, image)
 
     def show(self, target):
         target.blit(self.image, self.location)
 
     def move(self):
-        self.location[0] += self.moving_direction[0] / 3.0
-        self.location[1] += self.moving_direction[1] / 3.0
+        self.location[0] += self.moving_direction[0] * self.speed_multiplier
+        self.location[1] += self.moving_direction[1] * self.speed_multiplier
 
         self.hunger -= 1
 
@@ -112,12 +121,15 @@ class Herbivore:
 
         for i in range(0, len(self.sensed_plants)):
             features = self._construct_features(self.sensed_plants[i])
-            confidence = nn.forward_propagate(self.chromozome, features)
+            confidence = nn.forward_propagate(self.chromosome, features)
             if confidence > max_confidence:
                 desired_plant_index = i
                 max_confidence = confidence
 
-        # desired_plant = self.sensed_plants[0]
+        desired_plant = self.sensed_plants[desired_plant_index]
+
+        # print(len(self.sensed_plants))
+        # desired_plant = self.sensed_plants[random.randint(0, len(self.sensed_plants) - 1)]
 
         desired_plant = self.sensed_plants[0]
         self.target_plant_location = desired_plant.location
@@ -128,23 +140,20 @@ class Herbivore:
         # self.update_moving_direction(desired_plant.location)
 
     def _construct_features(self, plant):
-        """
-        Get the features we care about, so that would be
-        features = [my distance to the plant, plant's nutrition]
-        """
-        return []
+        target_direction = [self.location[0] - plant.location[0], self.location[1] - plant.location[1]]
+        plant_distance = math.sqrt(math.pow(target_direction[0], 2) + math.pow(target_direction[1], 2))
+
+        features = [plant_distance, plant.nutrition, plant.caffeine]
+        features_maximum = [MAX_DISTANCE, MAX_PLANT_NUTRITION, MAX_CAFFEINE]
+        normalized_features = nn.get_normalized_features(features, features_maximum)
+
+        return normalized_features
 
     def _get_moving_direction(self, target):
         # Geza's clever math and physics stuff
         magnitude = max(abs(target[0] - self.location[0]), abs(target[1] - self.location[1]))
         return [(target[0] - self.location[0]) / magnitude, (target[1] - self.location[1]) / magnitude]
 
-
-class Player(Herbivore):  # Herbivore but with keyboard controls (easier testing and debugging)
-
-    def __init__(self, location, sensed_plants):
-        super().__init__(location, sensed_plants)
-        self.color = (255, 255, 255)
 
 
 def get_angle(a, b, c):

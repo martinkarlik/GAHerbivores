@@ -3,18 +3,26 @@ import numpy as np
 
 
 def initiate_random_weights():
-    return [random.random() for _ in range(2)]
+    return [random.randrange(-1, 1) for _ in range(3)]
 
 
 def sigmoid(x):
-    """
-    Write the sigmoid function.
-    """
-    return x
+    return 1 / (1 + np.exp(-x))
 
 
 def forward_propagate(weights, features):
+    bias = random.randrange(-1, 1)
+    activation = sigmoid(np.dot(weights, features)+bias)
+    print(activation)
     """
     Multiply the features (plant's information) with the weights and then sigmoid them.
     """
-    return 1.0
+    return activation
+
+
+def get_normalized_features(features, features_maximum):
+    normalized_features = []
+    for i in range(len(features)):
+        normalized_features.append(features[i]/features_maximum[i])
+
+    return normalized_features
