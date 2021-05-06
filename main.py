@@ -9,7 +9,7 @@ BACKGROUND_COLOR = (184, 222, 111)
 
 
 NUM_GENERATIONS = 20
-TIME_PER_GENERATION = 100000
+TIME_PER_GENERATION = 2000
 MUTATION_PROBABILITY = 0.05
 
 NUM_HERBIVORES = 10
@@ -22,13 +22,14 @@ if __name__ == '__main__':
     pygame.display.set_caption("Hunger Games: Herbivores")
     screen = pygame.display.set_mode(DISPLAY_SIZE)
 
-    plants = [Plant.initiate_at_random() for _ in range(NUM_PLANTS)]
-
+    plants = []
     herbivores = [Herbivore.initiate_at_random() for _ in range(NUM_HERBIVORES)]
 
     for i in range(NUM_GENERATIONS):
+        print("Generation: {}".format(i))
 
         for ii in range(TIME_PER_GENERATION):
+            print("Time: {}".format(ii))
 
             # Replant plants if some have been eaten.
             plants_updated = False
@@ -37,12 +38,11 @@ if __name__ == '__main__':
                 plants.append(Plant.initiate_at_random())
 
             for herbivore in herbivores:
-
                 herbivore.update_sensed_plants(plants)
                 herbivore.move()
                 herbivore.eat()
 
-                if plants_updated or i == 0:
+                if plants_updated or ii == 0:
                     herbivore.lock_target()
 
                 if herbivore.lifetime <= 0:
@@ -68,12 +68,14 @@ if __name__ == '__main__':
             parent_b = ga.fitness_proportionate_selection(herbivores)
 
             offspring = ga.reproduce(parent_a, parent_b)
+
             if random.random() < MUTATION_PROBABILITY:
                 offspring = ga.mutate(offspring)
 
             offspring_population.append(offspring)
 
-        population = offspring_population
+        plants = []
+        herbivores = offspring_population
 
 
 

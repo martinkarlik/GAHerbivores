@@ -14,6 +14,7 @@ class Plant:
         self.location = location
         self.color = color
         self.nutrition = 1000
+        self.caffeine = 0.8
         self.image = pygame.transform.rotozoom(pygame.image.load('images/' + image + '.png'), random.randint(0, 360),
                                                0.5)
 
@@ -37,8 +38,6 @@ class Herbivore:
 
         self.location = location
         self.color = (1, 197, 196)
-
-        self.isMating = False
 
         self.moving_direction = [0, 0]
         self.sensed_plants = None
@@ -115,25 +114,19 @@ class Herbivore:
 
         # desired_plant = self.sensed_plants[desired_plant_index]
 
-        desired_plant = self.sensed_plants[0]
+        print(len(self.sensed_plants))
+        desired_plant = self.sensed_plants[random.randint(0, 4)]
         self.moving_direction = self._get_moving_direction(desired_plant.location)
         # self.update_moving_direction(desired_plant.location)
 
     def _construct_features(self, plant):
-        """
-        Get the features we care about, so that would be
-        features = [my distance to the plant, plant's nutrition]
-        """
-        return []
+        target_direction = [self.location[0] - plant.location[0], self.location[1] - plant.location[1]]
+        plant_distance = math.sqrt(math.pow(target_direction[0], 2) + math.pow(target_direction[1], 2))
+
+        return [plant_distance, plant.nutrition, plant.caffeine]
 
     def _get_moving_direction(self, target):
         # Geza's clever math and physics stuff
         magnitude = max(abs(target[0] - self.location[0]), abs(target[1] - self.location[1]))
         return [(target[0] - self.location[0]) / magnitude, (target[1] - self.location[1]) / magnitude]
 
-
-class Player(Herbivore):  # Herbivore but with keyboard controls (easier testing and debugging)
-
-    def __init__(self, location, sensed_plants):
-        super().__init__(location, sensed_plants)
-        self.color = (255, 255, 255)
