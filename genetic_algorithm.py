@@ -6,7 +6,7 @@ def get_most_fit(population):
     most_fit = population[0]
 
     for herbivore in population:
-        if herbivore.lifetime > most_fit.lifetime:
+        if herbivore.score > most_fit.score:
             most_fit = herbivore
 
     return most_fit
@@ -14,11 +14,11 @@ def get_most_fit(population):
 
 def fitness_proportionate_selection(population):
 
-    total_fitness = sum(herbivore.lifetime for herbivore in population)
+    total_fitness = sum(herbivore.score for herbivore in population)
     threshold = random.uniform(0, total_fitness)
     current = 0
     for herbivore in population:
-        current += herbivore.lifetime
+        current += herbivore.score
         if current > threshold:
             return herbivore
 

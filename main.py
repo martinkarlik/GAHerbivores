@@ -46,15 +46,16 @@ if __name__ == '__main__':
 
                 if not herbivore.is_dead:
 
-                    herbivore.life += 1
+                    herbivore.score -= 1
                     herbivore.update_sensed_plants(plants)
                     herbivore.update_moving_direction()
                     if not herbivore.is_turning:
                         herbivore.move()
                         herbivore.eat()
 
-                    if herbivore.hunger <= 0:
+                    if herbivore.score <= 0:
                         herbivore.is_dead = True
+                        herbivore.image = pygame.transform.rotozoom(herbivore.image, 180, 1)
                         print("poor herbivore died :(")
 
 
@@ -62,8 +63,7 @@ if __name__ == '__main__':
             screen.fill(BACKGROUND_COLOR)
 
             for herbivore in herbivores:
-                if not herbivore.is_dead:
-                    herbivore.show(screen)
+                herbivore.show(screen)
 
             for plant in plants:
                 plant.show(screen)

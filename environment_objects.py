@@ -8,18 +8,10 @@ DISPLAY_SIZE = (1200, 800)
 BACKGROUND_COLOR = (184, 222, 111)
 
 PLANT_VARIANTS = [
-    {'image': 'grass.png',
-     'nutrition': 2000,
-     'caffeine': 1.2},
-    {'image': 'leaf.png',
-     'nutrition': 3000,
-     'caffeine': 0.95},
-    {'image': 'carrot.png',
-     'nutrition': 5000,
-     'caffeine': 0.7},
-    {'image': 'branch.png',
-     'nutrition': 1500,
-     'caffeine': 1.1}
+    dict(image='grass.png', nutrition=2000,caffeine=1.2),
+    dict(image='leaf.png', nutrition=3000,caffeine=1.1),
+    dict(image='carrot.png', nutrition=5000,caffeine=0.8),
+    dict(image='branch.png', nutrition=1500,caffeine=1.4)
 ]
 
 MAX_DISTANCE = np.sqrt(2)*DISPLAY_SIZE[0]
@@ -62,14 +54,14 @@ class Herbivore:
 
         self.moving_direction = [0, 1]
         self.target_plant_location = None
-        self.turning_speed = 0.05
+        self.turning_speed = 0.03
         self.sensed_plants = None
 
         self.speed_multiplier = 0.5
         self.is_turning = False
-        self.angle_to_plant = None
+        self.turned_frames = 0
 
-        self.life = 5000
+        self.score = 5000
         self.chromosome = weights if weights is not None else nn.initiate_random_weights(4)
 
     @staticmethod
@@ -82,7 +74,7 @@ class Herbivore:
     def show(self, target):
         target.blit(self.image, self.location)
 
-        text = self.font.render("{}".format(self.life), True, (0, 0, 0), BACKGROUND_COLOR)
+        text = self.font.render("{}".format(self.score), True, (0, 0, 0), BACKGROUND_COLOR)
         text_rect = text.get_rect()
         text_rect.center = self.location
 
@@ -91,8 +83,6 @@ class Herbivore:
     def move(self):
         self.location[0] += self.moving_direction[0] * self.speed_multiplier
         self.location[1] += self.moving_direction[1] * self.speed_multiplier
-
-        self.life -= 1
 
     def update_sensed_plants(self, sensed_plants):
         self.sensed_plants = sensed_plants
@@ -106,9 +96,15 @@ class Herbivore:
         if not np.allclose(self.moving_direction, normalized_target_direction):
             if self.is_turning:
                 self.moving_direction = np.add(self.moving_direction, self.turn_target)
+                self.turned_frames += 1
                 if np.allclose(self.moving_direction, normalized_target_direction):
                     self.moving_direction = normalized_target_direction
                     self.is_turning = False
+                    self.turned_frames = 0
+                elif self.turned_frames > 1/self.turning_speed:
+                    self.moving_direction = normalized_target_direction
+                    self.is_turning = False
+                    self.turned_frames = 0
 
             else:
                 self.turn_target = np.subtract(normalized_target_direction, self.moving_direction)
@@ -123,7 +119,7 @@ class Herbivore:
             plant = self.sensed_plants[i]
             if abs(plant.location[0] - self.location[0]) < 30 and abs(plant.location[1] - self.location[1]) < 30:
                 self.sensed_plants.pop(i)
-                self.life += plant.nutrition
+                self.score += plant.nutrition
                 self.speed_multiplier *= plant.caffeine
                 plant_consumed = True
             i += 1
