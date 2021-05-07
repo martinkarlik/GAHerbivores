@@ -4,15 +4,15 @@ from environment_objects import *
 import genetic_algorithm as ga
 
 
-DISPLAY_SIZE = (1200, 800)
+DISPLAY_SIZE = (3000, 2000)
 BACKGROUND_COLOR = (184, 222, 111)
 
 NUM_GENERATIONS = 20
-TIME_PER_GENERATION = 10000
+TIME_PER_GENERATION = 5000
 MUTATION_PROBABILITY = 0.05
 
 NUM_HERBIVORES = 10
-NUM_PLANTS = 5
+NUM_PLANTS = 10
 
 
 if __name__ == '__main__':
@@ -37,27 +37,24 @@ if __name__ == '__main__':
                 plants.append(Plant.initiate_at_random())
 
             for herbivore in herbivores:
-                herbivore.update_sensed_plants(plants)
-                #herbivore.move()
-                #herbivore.eat()
-
-                if plants_updated or ii == 0:
-                    herbivore.lock_target()
 
                 if not herbivore.is_dead:
 
-                    herbivore.score -= 1
                     herbivore.update_sensed_plants(plants)
+
+                    if plants_updated or ii == 0:
+                        herbivore.lock_target()
+
                     herbivore.update_moving_direction()
                     herbivore.move()
+                    herbivore.score -= 1
 
                     if not herbivore.is_turning:
                         herbivore.eat()
 
-                    if herbivore.score <= 0:
+                    if herbivore.score <= 1:
                         herbivore.is_dead = True
                         herbivore.image = pygame.transform.rotozoom(herbivore.image, 180, 1)
-                        print("poor herbivore died :(")
 
 
             # DRAW EVERYTHING
@@ -80,8 +77,8 @@ if __name__ == '__main__':
             text_rect.bottomleft = (0, 80)
             screen.blit(text, text_rect)
 
-            best_lifetime = most_fit.lifetime if most_fit is not None else "-"
-            text = font.render("Best life: {}".format(best_lifetime), True, (0, 0, 0), BACKGROUND_COLOR)
+            best_score = most_fit.score if most_fit is not None else "-"
+            text = font.render("Best score: {}".format(best_score), True, (0, 0, 0), BACKGROUND_COLOR)
             text_rect = text.get_rect()
             text_rect.bottomleft = (0, 120)
             screen.blit(text, text_rect)
@@ -97,6 +94,7 @@ if __name__ == '__main__':
         # EVOLVE NEW GENERATION
 
         most_fit = ga.get_most_fit(herbivores)
+        print(most_fit.score)
 
         offspring_population = []
         while len(offspring_population) < len(herbivores):

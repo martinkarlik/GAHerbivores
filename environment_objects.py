@@ -4,17 +4,18 @@ import pygame
 import math
 import neural_network as nn
 
-DISPLAY_SIZE = (1200, 800)
+DISPLAY_SIZE = (3000, 2000)
 BACKGROUND_COLOR = (184, 222, 111)
 
 PLANT_VARIANTS = [
-    dict(image='grass.png', nutrition=2000,caffeine=1.2),
-    dict(image='leaf.png', nutrition=3000,caffeine=1.1),
-    dict(image='carrot.png', nutrition=5000,caffeine=0.8),
-    dict(image='branch.png', nutrition=1500,caffeine=1.4),
-    dict(image='bigmac.png', nutrition=500, caffeine=1.2)
+    dict(image='grass.png', nutrition=2000, caffeine=1.2),
+    dict(image='leaf.png', nutrition=3000, caffeine=1.1),
+    dict(image='carrot.png', nutrition=5000, caffeine=0.95),
+    dict(image='branch.png', nutrition=1500, caffeine=1.4),
+    dict(image='bigmac.png', nutrition=500, caffeine=0.8)
 ]
 
+SPEED_MULTIPLIER_LIMIT = 3.0
 MAX_DISTANCE = np.sqrt(2)*DISPLAY_SIZE[0]
 MAX_PLANT_NUTRITION = 5000
 MAX_CAFFEINE = 1.8
@@ -58,7 +59,7 @@ class Herbivore:
         self.turning_speed = 0.03
         self.sensed_plants = None
 
-        self.speed_multiplier = 0.5
+        self.speed_multiplier = 1.0
         self.is_turning = False
         self.turned_frames = 0
 
@@ -121,7 +122,7 @@ class Herbivore:
             if abs(plant.location[0] - self.location[0]) < 30 and abs(plant.location[1] - self.location[1]) < 30:
                 self.sensed_plants.pop(i)
                 self.score += plant.nutrition
-                self.speed_multiplier *= plant.caffeine
+                self.speed_multiplier = min(SPEED_MULTIPLIER_LIMIT, self.speed_multiplier * plant.caffeine)
                 plant_consumed = True
             i += 1
 
@@ -139,9 +140,6 @@ class Herbivore:
         desired_plant = self.sensed_plants[desired_plant_index]
 
         self.target_plant_location = desired_plant.location
-        # self.angle_to_plant = get_angle(normalize(np.subtract(desired_plant.location, self.location)), [0, 0], self.moving_direction)
-
-        # self.moving_direction = self._get_moving_direction(desired_plant.location)
         self.update_moving_direction()
 
     def _construct_features(self, plant):
