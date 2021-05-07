@@ -7,9 +7,8 @@ import genetic_algorithm as ga
 DISPLAY_SIZE = (1200, 800)
 BACKGROUND_COLOR = (184, 222, 111)
 
-
 NUM_GENERATIONS = 20
-TIME_PER_GENERATION = 10000
+TIME_PER_GENERATION = 1000
 MUTATION_PROBABILITY = 0.05
 
 NUM_HERBIVORES = 10
@@ -21,6 +20,7 @@ if __name__ == '__main__':
     pygame.init()
     pygame.display.set_caption("Hunger Games: Herbivores")
     screen = pygame.display.set_mode(DISPLAY_SIZE)
+    font = pygame.font.Font('freesansbold.ttf', 32)
 
     plants = []
     herbivores = [Herbivore.initiate_at_random() for _ in range(NUM_HERBIVORES)]
@@ -68,7 +68,6 @@ if __name__ == '__main__':
             for plant in plants:
                 plant.show(screen)
 
-            font = pygame.font.Font('freesansbold.ttf', 32)
 
             text = font.render("Generation: {}".format(i), True, (0, 0, 0), BACKGROUND_COLOR)
             text_rect = text.get_rect()
@@ -80,10 +79,17 @@ if __name__ == '__main__':
             text_rect.bottomleft = (0, 80)
             screen.blit(text, text_rect)
 
-            # text = font.render("Best lifetime: {}".format(most_fit.lifetime if most_fit is not None else "I don't know yet."), True, (0, 0, 0), BACKGROUND_COLOR)
-            # text_rect = text.get_rect()
-            # text_rect.bottomleft = (0, 120)
-            # screen.blit(text, text_rect)
+            best_lifetime = most_fit.lifetime if most_fit is not None else "-"
+            text = font.render("Best lifetime: {}".format(best_lifetime), True, (0, 0, 0), BACKGROUND_COLOR)
+            text_rect = text.get_rect()
+            text_rect.bottomleft = (0, 120)
+            screen.blit(text, text_rect)
+
+            best_weights = [round(num, 2) for num in most_fit.chromosome] if most_fit else "-"
+            text = font.render("Best weights: {}".format(best_weights), True, (0, 0, 0), BACKGROUND_COLOR)
+            text_rect = text.get_rect()
+            text_rect.bottomleft = (0, 160)
+            screen.blit(text, text_rect)
 
             pygame.display.update()
 
