@@ -1,13 +1,11 @@
 import random
-
 import numpy as np
 import pygame
 import math
-import numpy as np
-
 import neural_network as nn
 
 DISPLAY_SIZE = (1200, 800)
+BACKGROUND_COLOR = (184, 222, 111)
 
 PLANT_VARIANTS = [
     {'image': 'grass.png',
@@ -24,7 +22,7 @@ PLANT_VARIANTS = [
      'caffeine': 1.1}
 ]
 
-MAX_DISTANCE = np.sqrt(2) * DISPLAY_SIZE[1]
+MAX_DISTANCE = np.sqrt(2)*DISPLAY_SIZE[0]
 MAX_PLANT_NUTRITION = 5000
 MAX_CAFFEINE = 1.8
 
@@ -57,8 +55,8 @@ class Herbivore:
     def __init__(self, location, weights, image):
 
         self.location = location
-        self.color = (1, 197, 196)
         self.image = pygame.transform.rotozoom(pygame.image.load(image), 0, 1)
+        self.font = pygame.font.Font('freesansbold.ttf', 16)
 
         self.is_dead = False
         self.is_dead = False
@@ -85,6 +83,12 @@ class Herbivore:
 
     def show(self, target):
         target.blit(self.image, self.location)
+
+        text = self.font.render("{}".format(self.lifetime), True, (0, 0, 0), BACKGROUND_COLOR)
+        text_rect = text.get_rect()
+        text_rect.center = self.location
+
+        target.blit(text, text_rect)
 
     def move(self):
         self.location[0] += self.moving_direction[0] * self.speed_multiplier
