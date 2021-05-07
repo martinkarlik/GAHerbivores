@@ -8,7 +8,7 @@ DISPLAY_SIZE = (1200, 800)
 BACKGROUND_COLOR = (184, 222, 111)
 
 NUM_GENERATIONS = 20
-TIME_PER_GENERATION = 1000
+TIME_PER_GENERATION = 20000
 MUTATION_PROBABILITY = 0.05
 
 NUM_HERBIVORES = 10
@@ -55,6 +55,7 @@ if __name__ == '__main__':
 
                     if herbivore.hunger <= 0:
                         herbivore.is_dead = True
+                        herbivore.image = pygame.transform.rotozoom(herbivore.image, 180, 1)
                         print("poor herbivore died :(")
 
 
@@ -62,8 +63,7 @@ if __name__ == '__main__':
             screen.fill(BACKGROUND_COLOR)
 
             for herbivore in herbivores:
-                if not herbivore.is_dead:
-                    herbivore.show(screen)
+                herbivore.show(screen)
 
             for plant in plants:
                 plant.show(screen)

@@ -63,12 +63,12 @@ class Herbivore:
 
         self.moving_direction = [0, 1]
         self.target_plant_location = None
-        self.turning_speed = 0.05
+        self.turning_speed = 0.03
         self.sensed_plants = None
 
         self.speed_multiplier = 0.5
         self.is_turning = False
-        self.angle_to_plant = None
+        self.turned_frames = 0
 
         self.lifetime = 0
         self.hunger = 5000
@@ -108,9 +108,15 @@ class Herbivore:
         if not np.allclose(self.moving_direction, normalized_target_direction):
             if self.is_turning:
                 self.moving_direction = np.add(self.moving_direction, self.turn_target)
+                self.turned_frames += 1
                 if np.allclose(self.moving_direction, normalized_target_direction):
                     self.moving_direction = normalized_target_direction
                     self.is_turning = False
+                    self.turned_frames = 0
+                elif self.turned_frames > 1/self.turning_speed:
+                    self.moving_direction = normalized_target_direction
+                    self.is_turning = False
+                    self.turned_frames = 0
 
             else:
                 self.turn_target = np.subtract(normalized_target_direction, self.moving_direction)
