@@ -33,8 +33,8 @@ class Plant:
         self.location = location
         self.nutrition = PLANT_VARIANTS[type]["nutrition"]
         self.caffeine = PLANT_VARIANTS[type]["caffeine"]
-        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + PLANT_VARIANTS[type]["image"]), random.randint(0, 360), 0.5)
-
+        self.image = pygame.transform.rotozoom(pygame.image.load('images/' + PLANT_VARIANTS[type]["image"]),
+                                               random.randint(0, 360), 0.5)
 
     @staticmethod
     def initiate_at_random():
@@ -62,7 +62,7 @@ class Herbivore:
 
         self.moving_direction = [0, 1]
         self.target_plant_location = None
-        self.turning_speed = 0.01
+        self.turning_speed = 0.05
         self.sensed_plants = None
 
         self.speed_multiplier = 0.5
@@ -99,20 +99,22 @@ class Herbivore:
         self.sensed_plants = sensed_plants
 
     def update_moving_direction(self):
-        target_direction = np.subtract(self.location, self.target_plant_location)
+        target_direction = np.subtract(self.target_plant_location, self.location)
         target_vector_length = math.sqrt(math.pow(target_direction[0], 2) + math.pow(target_direction[1], 2))
         normalized_target_direction = [target_direction[0] / target_vector_length,
                                        target_direction[1] / target_vector_length]
+
         if not np.allclose(self.moving_direction, normalized_target_direction):
             if self.is_turning:
                 self.moving_direction = np.add(self.moving_direction, self.turn_target)
                 if np.allclose(self.moving_direction, normalized_target_direction):
                     self.moving_direction = normalized_target_direction
                     self.is_turning = False
+
             else:
                 self.turn_target = np.subtract(normalized_target_direction, self.moving_direction)
                 self.turn_target = np.multiply(self.turn_target, self.turning_speed)
-                self.angle_to_plant = self.angle_to_plant * self.turning_speed
+                # self.angle_to_plant = self.angle_to_plant * self.turning_speed
                 self.is_turning = True
 
     def eat(self):
@@ -142,7 +144,7 @@ class Herbivore:
         desired_plant = self.sensed_plants[desired_plant_index]
 
         self.target_plant_location = desired_plant.location
-        self.angle_to_plant = get_angle(normalize(np.subtract(desired_plant.location, self.location)), [0, 0], self.moving_direction)
+        # self.angle_to_plant = get_angle(normalize(np.subtract(desired_plant.location, self.location)), [0, 0], self.moving_direction)
 
         # self.moving_direction = self._get_moving_direction(desired_plant.location)
         self.update_moving_direction()
@@ -158,7 +160,6 @@ class Herbivore:
         return normalized_features
 
     def _get_moving_direction(self, target):
-        # Geza's clever math and physics stuff
         magnitude = max(abs(target[0] - self.location[0]), abs(target[1] - self.location[1]))
         return [(target[0] - self.location[0]) / magnitude, (target[1] - self.location[1]) / magnitude]
 
