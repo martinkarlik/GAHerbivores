@@ -11,7 +11,8 @@ PLANT_VARIANTS = [
     dict(image='grass.png', nutrition=2000,caffeine=1.2),
     dict(image='leaf.png', nutrition=3000,caffeine=1.1),
     dict(image='carrot.png', nutrition=5000,caffeine=0.8),
-    dict(image='branch.png', nutrition=1500,caffeine=1.4)
+    dict(image='branch.png', nutrition=1500,caffeine=1.4),
+    dict(image='bigmac.png', nutrition=500, caffeine=1.2)
 ]
 
 MAX_DISTANCE = np.sqrt(2)*DISPLAY_SIZE[0]
