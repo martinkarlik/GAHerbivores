@@ -6,7 +6,6 @@ def get_most_fit(population):
     most_fit = population[0]
 
     for herbivore in population:
-        print(herbivore.score)
         if herbivore.score > most_fit.score:
             most_fit = herbivore
 

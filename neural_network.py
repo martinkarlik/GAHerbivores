@@ -3,7 +3,7 @@ import numpy as np
 
 
 def initiate_random_weights(n_weights):
-    return [random.randrange(-1, 1) for _ in range(n_weights)]
+    return [random.random() * 2 - 1 for _ in range(n_weights)]
 
 
 def sigmoid(x):
@@ -14,6 +14,7 @@ def sigmoid(x):
 
 
 def forward_propagate(weights, features):
+
     activation = sigmoid(weights[0] + np.dot(weights[1:], features))
     return activation
 

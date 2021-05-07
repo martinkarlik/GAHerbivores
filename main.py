@@ -4,11 +4,11 @@ from environment_objects import *
 import genetic_algorithm as ga
 
 
-DISPLAY_SIZE = (3000, 2000)
+DISPLAY_SIZE = (1920, 1080)
 BACKGROUND_COLOR = (184, 222, 111)
 
 NUM_GENERATIONS = 20
-TIME_PER_GENERATION = 5000
+TIME_PER_GENERATION = 1000
 MUTATION_PROBABILITY = 0.05
 
 NUM_HERBIVORES = 10
@@ -77,24 +77,47 @@ if __name__ == '__main__':
             text_rect.bottomleft = (0, 80)
             screen.blit(text, text_rect)
 
-            best_score = most_fit.score if most_fit is not None else "-"
+            best_score = "-"
+            if most_fit:
+                best_score = most_fit.score
+
             text = font.render("Best score: {}".format(best_score), True, (0, 0, 0), BACKGROUND_COLOR)
             text_rect = text.get_rect()
             text_rect.bottomleft = (0, 120)
             screen.blit(text, text_rect)
 
-            best_weights = [round(num, 2) for num in most_fit.chromosome] if most_fit else "-"
-            text = font.render("Best weights: {}".format(best_weights), True, (0, 0, 0), BACKGROUND_COLOR)
+            text = font.render("Best weights", True, (0, 0, 0), BACKGROUND_COLOR)
             text_rect = text.get_rect()
-            text_rect.bottomleft = (0, 160)
+            text_rect.bottomleft = (0, 900)
             screen.blit(text, text_rect)
+
+            if not most_fit:
+                best_weights = [
+                    "Bias: -",
+                    "Distance to the plant: -",
+                    "Nutrition of the plant: -",
+                    "Plant's caffeine content: -"
+                ]
+            else:
+                best_weights = [
+                    "Bias: {:.1f}".format(most_fit.chromosome[0]),
+                    "Distance to the plant: {:.1f}".format(most_fit.chromosome[1]),
+                    "Nutrition of the plant: {:.1f}".format(most_fit.chromosome[2]),
+                    "Plant's caffeine content: {:.1f}".format(most_fit.chromosome[3])
+                ]
+
+            for iii in range(len(best_weights)):
+                text = font.render(best_weights[iii], True, (0, 0, 0), BACKGROUND_COLOR)
+                text_rect = text.get_rect()
+                text_rect.bottomleft = (0, 940 + 40 * iii)
+                screen.blit(text, text_rect)
+
 
             pygame.display.update()
 
         # EVOLVE NEW GENERATION
 
         most_fit = ga.get_most_fit(herbivores)
-        print(most_fit.score)
 
         offspring_population = []
         while len(offspring_population) < len(herbivores):

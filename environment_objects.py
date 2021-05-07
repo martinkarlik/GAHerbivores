@@ -4,7 +4,7 @@ import pygame
 import math
 import neural_network as nn
 
-DISPLAY_SIZE = (3000, 2000)
+DISPLAY_SIZE = (1920, 1080)
 BACKGROUND_COLOR = (184, 222, 111)
 
 PLANT_VARIANTS = [
@@ -136,6 +136,7 @@ class Herbivore:
             if confidence > max_confidence:
                 desired_plant_index = i
                 max_confidence = confidence
+
 
         desired_plant = self.sensed_plants[desired_plant_index]
 
