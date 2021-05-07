@@ -69,8 +69,7 @@ class Herbivore:
         self.is_turning = False
         self.angle_to_plant = None
 
-        self.lifetime = 0
-        self.hunger = 5000
+        self.life = 5000
         self.chromosome = weights if weights is not None else nn.initiate_random_weights(4)
 
     @staticmethod
@@ -83,7 +82,7 @@ class Herbivore:
     def show(self, target):
         target.blit(self.image, self.location)
 
-        text = self.font.render("{}".format(self.lifetime), True, (0, 0, 0), BACKGROUND_COLOR)
+        text = self.font.render("{}".format(self.life), True, (0, 0, 0), BACKGROUND_COLOR)
         text_rect = text.get_rect()
         text_rect.center = self.location
 
@@ -93,7 +92,7 @@ class Herbivore:
         self.location[0] += self.moving_direction[0] * self.speed_multiplier
         self.location[1] += self.moving_direction[1] * self.speed_multiplier
 
-        self.hunger -= 1
+        self.life -= 1
 
     def update_sensed_plants(self, sensed_plants):
         self.sensed_plants = sensed_plants
@@ -124,9 +123,8 @@ class Herbivore:
             plant = self.sensed_plants[i]
             if abs(plant.location[0] - self.location[0]) < 30 and abs(plant.location[1] - self.location[1]) < 30:
                 self.sensed_plants.pop(i)
-                self.hunger += plant.nutrition
+                self.life += plant.nutrition
                 self.speed_multiplier *= plant.caffeine
-                self.lifetime += plant.nutrition
                 plant_consumed = True
             i += 1
 

@@ -8,7 +8,7 @@ DISPLAY_SIZE = (1200, 800)
 BACKGROUND_COLOR = (184, 222, 111)
 
 NUM_GENERATIONS = 20
-TIME_PER_GENERATION = 1000
+TIME_PER_GENERATION = 10000
 MUTATION_PROBABILITY = 0.05
 
 NUM_HERBIVORES = 10
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
                 if not herbivore.is_dead:
 
-                    herbivore.lifetime += 1
+                    herbivore.life += 1
                     herbivore.update_sensed_plants(plants)
                     herbivore.update_moving_direction()
                     if not herbivore.is_turning:
@@ -80,7 +80,7 @@ if __name__ == '__main__':
             screen.blit(text, text_rect)
 
             best_lifetime = most_fit.lifetime if most_fit is not None else "-"
-            text = font.render("Best lifetime: {}".format(best_lifetime), True, (0, 0, 0), BACKGROUND_COLOR)
+            text = font.render("Best life: {}".format(best_lifetime), True, (0, 0, 0), BACKGROUND_COLOR)
             text_rect = text.get_rect()
             text_rect.bottomleft = (0, 120)
             screen.blit(text, text_rect)
