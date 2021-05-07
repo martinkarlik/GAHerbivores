@@ -59,7 +59,6 @@ class Herbivore:
         self.font = pygame.font.Font('freesansbold.ttf', 16)
 
         self.is_dead = False
-        self.is_dead = False
 
         self.moving_direction = [0, 1]
         self.target_plant_location = None
@@ -146,7 +145,7 @@ class Herbivore:
         self.angle_to_plant = get_angle(normalize(np.subtract(desired_plant.location, self.location)), [0, 0], self.moving_direction)
 
         # self.moving_direction = self._get_moving_direction(desired_plant.location)
-        # self.update_moving_direction(desired_plant.location)
+        self.update_moving_direction()
 
     def _construct_features(self, plant):
         target_direction = [self.location[0] - plant.location[0], self.location[1] - plant.location[1]]
