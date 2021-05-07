@@ -49,8 +49,9 @@ if __name__ == '__main__':
                     herbivore.score -= 1
                     herbivore.update_sensed_plants(plants)
                     herbivore.update_moving_direction()
+                    herbivore.move()
+
                     if not herbivore.is_turning:
-                        herbivore.move()
                         herbivore.eat()
 
                     if herbivore.score <= 0:
