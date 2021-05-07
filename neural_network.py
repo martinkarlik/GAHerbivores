@@ -2,8 +2,8 @@ import random
 import numpy as np
 
 
-def initiate_random_weights():
-    return [random.randrange(-1, 1) for _ in range(3)]
+def initiate_random_weights(n_weights):
+    return [random.randrange(-1, 1) for _ in range(n_weights)]
 
 
 def sigmoid(x):
@@ -11,11 +11,7 @@ def sigmoid(x):
 
 
 def forward_propagate(weights, features):
-    bias = random.randrange(-1, 1)
-    activation = sigmoid(np.dot(weights, features)+bias)
-    """
-    Multiply the features (plant's information) with the weights and then sigmoid them.
-    """
+    activation = sigmoid(weights[0] + np.dot(weights[1:], features))
     return activation
 
 

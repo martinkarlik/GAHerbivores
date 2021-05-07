@@ -58,9 +58,10 @@ class Herbivore:
 
         self.location = location
         self.color = (1, 197, 196)
+        self.image = pygame.transform.rotozoom(pygame.image.load(image), 0, 1)
 
-        self.isMating = False
-        self.isDead = False
+        self.is_dead = False
+        self.is_dead = False
 
         self.moving_direction = [0, 1]
         self.target_plant_location = None
@@ -70,11 +71,10 @@ class Herbivore:
         self.speed_multiplier = 0.5
         self.is_turning = False
         self.angle_to_plant = None
-        self.image = pygame.transform.rotozoom(pygame.image.load(image), 0, 1)
 
         self.lifetime = 0
         self.hunger = 5000
-        self.chromosome = weights if weights is not None else nn.initiate_random_weights()
+        self.chromosome = weights if weights is not None else nn.initiate_random_weights(4)
 
     @staticmethod
     def initiate_at_random(weights=None, image='images/stegosaurus.png'):
@@ -113,11 +113,6 @@ class Herbivore:
                 self.is_turning = True
 
     def eat(self):
-        """
-        Loop through all the plants, and consume the one close to herbivore (if any).
-        Add its nutrition to my lifetime and delete that plant (which modifies global plant array).
-        """
-
         i = 0
         plant_consumed = False
         while i < len(self.sensed_plants) and not plant_consumed:
@@ -131,7 +126,6 @@ class Herbivore:
             i += 1
 
     def lock_target(self):
-
         desired_plant_index = 0
         max_confidence = 0
 
@@ -144,14 +138,9 @@ class Herbivore:
 
         desired_plant = self.sensed_plants[desired_plant_index]
 
-        # print(len(self.sensed_plants))
-        # desired_plant = self.sensed_plants[random.randint(0, len(self.sensed_plants) - 1)]
-
-        desired_plant = self.sensed_plants[0]
         self.target_plant_location = desired_plant.location
-        self.angle_to_plant = get_angle(normalize(np.subtract(desired_plant.location, self.location)), [0, 0],
-                                        self.moving_direction)
-        print(self.angle_to_plant)
+        self.angle_to_plant = get_angle(normalize(np.subtract(desired_plant.location, self.location)), [0, 0], self.moving_direction)
+
         # self.moving_direction = self._get_moving_direction(desired_plant.location)
         # self.update_moving_direction(desired_plant.location)
 
@@ -171,11 +160,7 @@ class Herbivore:
         return [(target[0] - self.location[0]) / magnitude, (target[1] - self.location[1]) / magnitude]
 
 
-
 def get_angle(a, b, c):
-    print(a)
-    print(b)
-    print(c)
     angle = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
     return angle
 
