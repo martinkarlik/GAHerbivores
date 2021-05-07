@@ -7,7 +7,10 @@ def initiate_random_weights(n_weights):
 
 
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    try:
+        return 1 / (1 + np.exp(-x))
+    except OverflowError:
+        print('error')
 
 
 def forward_propagate(weights, features):
