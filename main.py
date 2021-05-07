@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
             text = font.render("Best weights", True, (0, 0, 0), BACKGROUND_COLOR)
             text_rect = text.get_rect()
-            text_rect.bottomleft = (0, 900)
+            text_rect.bottomleft = (0, DISPLAY_SIZE[1] - 200)
             screen.blit(text, text_rect)
 
             if not most_fit:
@@ -109,7 +109,7 @@ if __name__ == '__main__':
             for iii in range(len(best_weights)):
                 text = font.render(best_weights[iii], True, (0, 0, 0), BACKGROUND_COLOR)
                 text_rect = text.get_rect()
-                text_rect.bottomleft = (0, 940 + 40 * iii)
+                text_rect.bottomleft = (0, DISPLAY_SIZE[1] - 160 + 40 * iii)
                 screen.blit(text, text_rect)
 
 
