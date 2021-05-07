@@ -38,8 +38,8 @@ if __name__ == '__main__':
 
             for herbivore in herbivores:
                 herbivore.update_sensed_plants(plants)
-                herbivore.move()
-                herbivore.eat()
+                #herbivore.move()
+                #herbivore.eat()
 
                 if plants_updated or ii == 0:
                     herbivore.lock_target()
